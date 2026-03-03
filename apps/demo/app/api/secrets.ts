@@ -7,8 +7,8 @@ export const AVATAR_ID = "910777e7-530e-47cb-bd29-b3661ca8a74f";
 export const IS_SANDBOX = false;
 
 // FULL MODE Customizations
-// Wayne's avatar voice and context
-export const VOICE_ID = "c2527536-6d1f-4412-a643-53a3497dada9";
+// London Strategy Centre's avatar voice and context
+export const VOICE_ID = "9064923c-28c1-49d8-a9df-63915f83b61b";
 export const CONTEXT_ID = "ceaed12f-72d8-431e-9d9d-2ab9c5b965f7";
 export const LANGUAGE = "en";
 
