@@ -4,6 +4,7 @@ export enum MessageSender {
 }
 
 export interface LiveAvatarSessionMessage {
+  id?: string;
   sender: MessageSender;
   message: string;
   timestamp: number;

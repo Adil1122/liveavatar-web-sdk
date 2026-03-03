@@ -6,10 +6,9 @@ import {
   SessionEvent,
   VoiceChatEvent,
   VoiceChatState,
-  AgentEventsEnum,
-  VoiceChatConfig,
 } from "@heygen/liveavatar-web-sdk";
-import { LiveAvatarSessionMessage } from "./types";
+import { AgentEventsEnum, VoiceChatConfig } from "@heygen/liveavatar-web-sdk";
+import { LiveAvatarSessionMessage, MessageSender } from "./types";
 import { API_URL } from "../../app/api/secrets";
 
 type LiveAvatarContextProps = {
@@ -128,53 +127,55 @@ const useTalkingState = (sessionRef: React.RefObject<LiveAvatarSession>) => {
   return { isUserTalking, isAvatarTalking };
 };
 
-// const useChatHistoryState = (
-//   sessionRef: React.RefObject<LiveAvatarSession>
-// ) => {
-//   const [messages, setMessages] = useState<LiveAvatarSessionMessage[]>([]);
-//   const currentSenderRef = useRef<MessageSender | null>(null);
+const useChatHistoryState = (
+  sessionRef: React.RefObject<LiveAvatarSession>,
+) => {
+  const [messages, setMessages] = useState<LiveAvatarSessionMessage[]>([]);
 
-//   // useEffect(() => {
-//   //   if (sessionRef.current) {
-//   //     const handleMessage = (
-//   //       sender: MessageSender,
-//   //       { task_id, message }: { task_id: string; message: string }
-//   //     ) => {
-//   //       if (currentSenderRef.current === sender) {
-//   //         setMessages((prev) => [
-//   //           ...prev.slice(0, -1),
-//   //           {
-//   //             ...prev[prev.length - 1]!,
-//   //             message: [prev[prev.length - 1]!.message, message].join(""),
-//   //           },
-//   //         ]);
-//   //       } else {
-//   //         currentSenderRef.current = sender;
-//   //         setMessages((prev) => [
-//   //           ...prev,
-//   //           {
-//   //             id: task_id,
-//   //             sender: sender,
-//   //             message,
-//   //             timestamp: Date.now(),
-//   //           },
-//   //         ]);
-//   //       }
-//   //     };
+  useEffect(() => {
+    if (sessionRef.current) {
+      const handleMessage = (
+        sender: MessageSender,
+        event: { event_id: string; text: string },
+      ) => {
+        setMessages((prev) => {
+          const lastMessage = prev[prev.length - 1];
+          // If the last message has the same event_id and sender, append text
+          if (lastMessage && lastMessage.id === event.event_id && lastMessage.sender === sender) {
+            return [
+              ...prev.slice(0, -1),
+              {
+                ...lastMessage,
+                message: lastMessage.message + event.text,
+                timestamp: Date.now(),
+              },
+            ];
+          }
+          // Otherwise, add a new message
+          return [
+            ...prev,
+            {
+              id: event.event_id,
+              sender,
+              message: event.text,
+              timestamp: Date.now(),
+            },
+          ];
+        });
+      };
 
-//   //     sessionRef.current.on(
-//   //       AgentEventsEnum.USER_SPEAK_STARTED,
-//   //       (data) => console.log("USER_SPEAK_STARTED", data)
-//   //       handleMessage(MessageSender.USER, {
-//   //   task_id: data.,
-//   //   message: data.text || "",
-//   // })
-//   //     );
-//   //   }
-//   // }, [sessionRef]);
+      sessionRef.current.on(AgentEventsEnum.USER_TRANSCRIPTION, (data) => {
+        handleMessage(MessageSender.USER, data);
+      });
 
-//   return { messages };
-// };
+      sessionRef.current.on(AgentEventsEnum.AVATAR_TRANSCRIPTION, (data) => {
+        handleMessage(MessageSender.AVATAR, data);
+      });
+    }
+  }, [sessionRef]);
+
+  return { messages };
+};
 
 export const LiveAvatarContextProvider = ({
   children,
@@ -195,7 +196,7 @@ export const LiveAvatarContextProvider = ({
 
   const { isMuted, voiceChatState } = useVoiceChatState(sessionRef);
   const { isUserTalking, isAvatarTalking } = useTalkingState(sessionRef);
-  // const { messages } = useChatHistoryState(sessionRef);
+  const { messages } = useChatHistoryState(sessionRef);
 
   return (
     <LiveAvatarContext.Provider
@@ -208,7 +209,7 @@ export const LiveAvatarContextProvider = ({
         voiceChatState,
         isUserTalking,
         isAvatarTalking,
-        messages: [], // TODO - properly implement chat history
+        messages,
       }}
     >
       {children}
