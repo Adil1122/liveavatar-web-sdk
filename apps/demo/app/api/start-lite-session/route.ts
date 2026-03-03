@@ -18,21 +18,11 @@ export async function POST() {
     });
     if (!res.ok) {
       const error = await res.json();
-      if (error.error) {
-        const resp = await res.json();
-        const errorMessage =
-          resp.data[0].message ?? "Failed to retrieve session token";
-        return new Response(JSON.stringify({ error: errorMessage }), {
-          status: res.status,
-        });
-      }
-
-      return new Response(
-        JSON.stringify({ error: "Failed to retrieve session token" }),
-        {
-          status: res.status,
-        },
-      );
+      const errorMessage =
+        error.data?.[0]?.message ?? error.message ?? "Failed to retrieve session token";
+      return new Response(JSON.stringify({ error: errorMessage }), {
+        status: res.status,
+      });
     }
     const data = await res.json();
     console.log(data);
