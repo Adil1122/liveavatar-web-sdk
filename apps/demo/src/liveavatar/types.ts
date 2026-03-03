@@ -1,3 +1,5 @@
+export type SessionMode = "FULL" | "FULL_PTT" | "LITE";
+
 export enum MessageSender {
   USER = "user",
   AVATAR = "avatar",

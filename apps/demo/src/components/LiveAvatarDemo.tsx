@@ -3,8 +3,7 @@
 import { useMemo, useState } from "react";
 import { LiveAvatarSession } from "./LiveAvatarSession";
 import { SessionInteractivityMode } from "@heygen/liveavatar-web-sdk";
-
-export type SessionMode = "FULL" | "FULL_PTT" | "LITE";
+import { type SessionMode } from "../liveavatar/types";
 
 export const LiveAvatarDemo = () => {
   const [sessionToken, setSessionToken] = useState("");

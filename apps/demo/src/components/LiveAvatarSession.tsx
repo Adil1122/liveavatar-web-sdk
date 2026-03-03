@@ -6,7 +6,7 @@ import {
   useSession,
 } from "../liveavatar";
 import { SessionState, type VoiceChatConfig } from "@heygen/liveavatar-web-sdk";
-import { type SessionMode } from "./LiveAvatarDemo";
+import { type SessionMode } from "../liveavatar/types";
 
 import { useChatHistory } from "../liveavatar/useChatHistory";
 import { MessageSender } from "../liveavatar/types";
@@ -195,7 +195,6 @@ export const LiveAvatarSession: React.FC<{
 }> = ({
   sessionAccessToken,
   onSessionStopped,
-  mode,
   voiceChatConfig = true,
 }) => {
     return (

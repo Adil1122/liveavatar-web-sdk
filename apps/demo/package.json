@@ -13,10 +13,10 @@
   "dependencies": {
     "next": "^15.5.7",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "@heygen/liveavatar-web-sdk": "workspace:*"
   },
   "devDependencies": {
-    "@heygen/liveavatar-web-sdk": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
